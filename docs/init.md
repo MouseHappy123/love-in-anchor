@@ -41,5 +41,5 @@ pip install -r requirements.txt
 
 ```
 python init.py
-gunicorn -w 4 -b 127.0.0.1:port app:app
+nohup gunicorn -w 4 -b 127.0.0.1:port app:app >/dev/null 2>&1 &
 ```
