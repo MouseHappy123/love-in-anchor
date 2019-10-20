@@ -22,9 +22,17 @@ os.urandom(12).hex()
 #### nginx配置：
 
 ```
-location /love_in_anchor/api/ {
+location /love-in-anchor/ {
 	proxy_pass http://127.0.0.1:port/;
 }
+```
+
+---
+
+#### 安装依赖
+
+```
+pip install -r requirements.txt
 ```
 
 ---
