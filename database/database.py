@@ -21,7 +21,7 @@ class User(Base):
     college = Column(Text, nullable=False)
     campus = Column(Integer, nullable=False)
     tele = Column(String(11), nullable=False)
-    time= Column(Integer,nullable=False)
+    time= Column(Text,nullable=False)
 
     __table_args__ = {
         "mysql_engine": "InnoDB",
@@ -51,24 +51,24 @@ class database(object):
         try:
             query=(Session.query(User).filter(User.tele==tele).first())
         except Exception as e:
-            return jsonify({
-                "errcode":400,
+            return {
+                "errcode":403,
                 "errmsg":str(e)
-            })
+            }
         Session.close()
         if not query:
-            return jsonify({
+            return {
                 "errcode":401,
                 "errmsg":"还未报名"
-            })
+            }
         else:
-            return jsonify({
-                "errcode":0,
+            return {
+                "errcode":402,
                 "errmsg":{
                     "name":query.name,
                     "tele":query.tele
                 }
-            })
+            }
 
     #更新报名信息
     def updateUser(self,data):

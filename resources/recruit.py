@@ -7,10 +7,14 @@ from database.database import database
 class recruit(Resource):
     def post(self):
         data = request.get_json(force=True)
-        result = checkInfo(data['name'], data['gender'], data['grade'],
-                           data['college'], data['campus'], data['tele'], data['time'])
-        if result['errcode']==0:
-            return database().updateUser(data)
+        check = database().isRecruit(data['tele'])
+        if check['errcode']==401:
+            result = checkInfo(data['name'], data['gender'], data['grade'],
+                               data['college'], data['campus'], data['tele'], data['time'])
+            if result['errcode']==0:
+                return database().updateUser(data)
+            else:
+                return result
         else:
-            return result
+            return check
         
