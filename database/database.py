@@ -65,6 +65,7 @@ class database(object):
             return {
                 "errcode":402,
                 "errmsg":{
+                    "msg":"已报名",
                     "name":query.name,
                     "tele":query.tele
                 }
