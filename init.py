@@ -25,7 +25,7 @@ class User(Base):
     college = Column(Text, nullable=False)
     campus = Column(Integer, nullable=False)
     tele = Column(String(11), nullable=False)
-    time = Column(Integer, nullable=False)
+    time = Column(Text, nullable=False)
 
     __table_args__ = {
         "mysql_engine": "InnoDB",
