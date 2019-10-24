@@ -12,6 +12,8 @@ class recruit(Resource):
             result = checkInfo(data['name'], data['gender'], data['grade'],
                                data['college'], data['campus'], data['tele'], data['time'])
             if result['errcode']==0:
+                #时间数组转字符串
+                data['time']=','.join(data['time'])
                 return database().updateUser(data)
             else:
                 return result

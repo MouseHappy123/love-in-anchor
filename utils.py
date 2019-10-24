@@ -1,7 +1,9 @@
 # encoding:utf-8
 from config import cfg
-from flask import jsonify
+from flask import jsonify,session,request
 import re
+import requests
+import json
 
 telPattern = "^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$"
 namePattern = u"^[\u4e00-\u9fa5]{2,8}$"
@@ -42,3 +44,52 @@ def checkInfo(name, gender, grade, college, campus, tele, time):
     return {
         "errcode": 0
     }
+
+#检查是否授权微信登录
+def checkLogin():
+    if "open_id" not in session:
+        sess_id = request.cookies.get("PHPSESSID")
+        if sess_id is not None:
+            r = requests.get("https://hemc.100steps.net/2017/wechat/Home/Index/getUserInfo", timeout=5,
+                             cookies=dict(PHPSESSID=sess_id))
+            try:
+                t = json.loads(r.text)
+                if "openid" in t:
+                    session["open_id"] = t["openid"]
+            except:
+                pass
+    if "open_id" not in session:
+        return {
+            "errcode":400, 
+            "errmsg":"未授权登录"
+        }
+    return {
+            "errcode":0, 
+            "errmsg":session['open_id']
+    }
+
+# 判断用户是否关注公众号
+def checkSubscribe():
+    if "open_id" in session:
+        response = requests.get('https://hemc.100steps.net/2017/wechat/Home/Index/getSubscribe?state=https://hemc.100steps.net/2017/wechat/Home/Index/getSubscribe',timeout=5).text
+        try:
+            t=json.loads(response)
+            if "subscribe" in t:
+                session['check_sub'] = t['subscribe']
+        except:
+            pass
+        if not session['check_sub']:
+            return {
+                "errcode":401, 
+                "errmsg":"未关注"
+            }
+        else:
+            return {
+                "errcode":0,
+                "errmsg":"已关注"
+            }
+    else:
+        return {
+            "errcode":400, 
+            "errmsg":"未授权登录"
+        }
