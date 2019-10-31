@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from config import cfg
 from flask import jsonify
 engine = create_engine("mysql+pymysql://"+cfg["username"]+":"+cfg["password"] +
-                       "@"+cfg["host"]+"/"+cfg["database"]+"?charset=utf8mb4")
+                       "@"+cfg["host"]+"/"+cfg["database"]+"?charset=utf8mb4",pool_pre_ping=True,pool_recycle=3600)
 #建库
 if not database_exists(engine.url):
     create_database(engine.url)
@@ -83,7 +83,7 @@ data.append(school(id=29, campus=2, college='自动化科学与工程学院'))
 data.append(school(id=30, campus=2, college='微电子学院'))
 data.append(school(id=31, campus=2, college='生物医学科学与工程学院'))
 data.append(school(id=32, campus=2, college='分子科学与工程学院'))
-data.append(school(id=33, campus=2, college='吴贤能智能工程学院'))
+data.append(school(id=33, campus=2, college='吴贤铭智能工程学院'))
 for i in range(33):
     session.add(data[i])
 session.commit()

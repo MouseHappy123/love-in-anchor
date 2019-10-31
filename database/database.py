@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from config import cfg
 from flask import jsonify
 engine = create_engine("mysql+pymysql://"+cfg["username"]+":"+cfg["password"] +
-                       "@"+cfg["host"]+"/"+cfg["database"]+"?charset=utf8mb4")
+                       "@"+cfg["host"]+"/"+cfg["database"]+"?charset=utf8mb4",pool_pre_ping=True,pool_recycle=3600)
 Base = declarative_base()
 
 

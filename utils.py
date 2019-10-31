@@ -4,6 +4,7 @@ from flask import jsonify,session,request
 import re
 import requests
 import json
+import time
 
 telPattern = "^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$"
 namePattern = u"^[\u4e00-\u9fa5]{2,8}$"
@@ -65,13 +66,15 @@ def checkLogin():
         }
     return {
             "errcode":0, 
-            "errmsg":session['open_id']
+            # "errmsg":session['open_id']
     }
 
 # 判断用户是否关注公众号
 def checkSubscribe():
     if "open_id" in session:
-        response = requests.get('https://hemc.100steps.net/2017/wechat/Home/Index/getSubscribe?state=https://hemc.100steps.net/2017/wechat/Home/Index/getSubscribe',timeout=5).text
+        sess_id = request.cookies.get("PHPSESSID")
+        response = requests.get('https://hemc.100steps.net/2017/wechat/Home/Index/getSubscribe?state=https://hemc.100steps.net/2017/wechat/Home/Index/getSubscribe',
+                                timeout=5,cookies=dict(PHPSESSID=sess_id)).text
         try:
             t=json.loads(response)
             if "subscribe" in t:
@@ -93,3 +96,17 @@ def checkSubscribe():
             "errcode":400, 
             "errmsg":"未授权登录"
         }
+
+#判断时间
+def checkTime():
+    format="%Y-%m-%d %H:%M:%S"
+    begin=time.mktime(time.strptime(cfg['begin'],format))
+    end=time.mktime(time.strptime(cfg['end'],format))
+    now=time.time()
+    #比较时间
+    if now<begin:
+        return {"errcode":400,"errmsg":"活动还没开始"}
+    elif now>end:
+        return {"errcode":401,"errmsg":"活动已结束"}
+    else:
+        return {"errcode":0}
